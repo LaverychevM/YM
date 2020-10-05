@@ -4,8 +4,7 @@
     <!-- Подключаем API -->
     <!-- Подробнее https://tech.yandex.ru/maps/doc/jsapi/2.1/dg/concepts/load-docpage/ -->
     <script src="https://yastatic.net/jquery/2.2.3/jquery.min.js"></script>
-       <script src="geoxml_display.js" type="text/javascript"></script>
-  <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;coordorder=longlat&amp;apikey=<ваш API-ключ>"></script>
+  <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;coordorder=longlat&amp;"></script>
 <!-- Создаём карту -->
 <script type="text/javascript">
     // Функция ymaps.ready() будет вызвана, когда
@@ -81,7 +80,7 @@
 
 
     // Загружаем GeoJSON файл, экспортированный из Конструктора карт.
-        $.getJSON('moscow.geojson')
+        $.getJSON('moscow2.geojson')
         .done(function (geoJson) {
 
             geoJson.features.forEach(function (obj) {
