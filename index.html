@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Подключаем API -->
+    <!-- Подробнее https://tech.yandex.ru/maps/doc/jsapi/2.1/dg/concepts/load-docpage/ -->
+    <script src="https://yastatic.net/jquery/2.2.3/jquery.min.js"></script>
+       <script src="geoxml_display.js" type="text/javascript"></script>
+  <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;coordorder=longlat&amp;apikey=<ваш API-ключ>"></script>
+<!-- Создаём карту -->
+<script type="text/javascript">
+    // Функция ymaps.ready() будет вызвана, когда
+    // загрузятся все компоненты API, а также когда будет готово DOM-дерево.
+  ymaps.ready(function () {
+    var map = new ymaps.Map('map', {
+            center: [69, 60.698],
+            zoom: 3,
+            controls: ['zoomControl']
+        }), 
+        objectManager = new ymaps.ObjectManager({
+            // Setting an option to make placemarks start clusterizing.
+            clusterize: true,
+            // ObjectManager accepts the same options as the clusterer.
+            gridSize: 64,
+            // The layout of the pieChart cluster placemark.
+            clusterIconLayout: "default#pieChart"
+        });
+            map.geoObjects.add(objectManager);
+            
+                var listBoxItems = ['Шоссейные', 'Внедорожные']
+            .map(function (title) {
+                return new ymaps.control.ListBoxItem({
+                    data: {
+                        content: title
+                    },
+                    state: {
+                        selected: true
+                    }
+                })
+            }),
+        reducer = function (filters, filter) {
+            filters[filter.data.get('content')] = filter.isSelected();
+            return filters;
+        },
+        // Now creating the drop-down list with 5 items.
+        listBoxControl = new ymaps.control.ListBox({
+            data: {
+                content: 'Фильтр',
+                title: 'Filter'
+            },
+            items: listBoxItems,
+            state: {
+                // Indicates that the list is expanded.
+                expanded: true,
+                filters: listBoxItems.reduce(reducer, {})
+            }
+        });
+    map.controls.add(listBoxControl);
+
+    // Adding tracking to the indicator to check if a list item is selected.
+    listBoxControl.events.add(['select', 'deselect'], function (e) {
+        var listBoxItem = e.get('target');
+        var filters = ymaps.util.extend({}, listBoxControl.state.get('filters'));
+        filters[listBoxItem.data.get('content')] = listBoxItem.isSelected();
+        listBoxControl.state.set('filters', filters);
+    });
+
+    var filterMonitor = new ymaps.Monitor(listBoxControl.state);
+    filterMonitor.add('filters', function (filters) {
+        // Applying the filter.
+        objectManager.setFilter(getFilterFunction(filters));
+    });
+
+
+    function getFilterFunction(categories) {
+        return function (obj) {
+            var content = obj.properties.filter;
+            return categories[content]
+        }
+    }
+
+
+
+    // Загружаем GeoJSON файл, экспортированный из Конструктора карт.
+        $.getJSON('moscow.geojson')
+        .done(function (geoJson) {
+
+            geoJson.features.forEach(function (obj) {
+                // Задаём контент балуна.
+                obj.properties.balloonContent = obj.properties.description;
+                // Задаём пресет для меток с полем iconCaption.
+                if (obj.properties.iconCaption) {
+                    obj.options = {
+                    }
+                }
+            });
+            // Добавляем описание объектов в формате JSON в менеджер объектов.
+           objectManager.add(geoJson);
+            // Добавляем объекты на карту.
+
+        });
+
+
+});
+
+</script>
+</head>
+<body>
+ 
+<!-- Создаём контейнер для карты -->
+<div id="map" style="width: 600px; height: 400px"></div>
+ 
+
+</body>
+</html>
