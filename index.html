@@ -80,16 +80,16 @@
 
 
     // Загружаем GeoJSON файл, экспортированный из Конструктора карт.
-        $.getJSON('moscow2.geojson')
+        $.getJSON('filtertest.geojson')
         .done(function (geoJson) {
 
             geoJson.features.forEach(function (obj) {
                 // Задаём контент балуна.
                 obj.properties.balloonContent = obj.properties.description;
                 // Задаём пресет для меток с полем iconCaption.
-                if (obj.properties.marker-color = #1e98ff) {
-                    obj.properties.filter = {
-                       content: "Внедорожные";
+                if (obj.properties) {
+                    obj.options = {
+
                     }
                 }
             });
