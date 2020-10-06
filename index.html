@@ -14,12 +14,14 @@
             center: [69, 60.698],
             zoom: 3,
             controls: ['zoomControl']
-        }), 
+        }), {
+            searchControlProvider: 'yandex#search'
+        }),
         objectManager = new ymaps.ObjectManager({
             // Setting an option to make placemarks start clusterizing.
             clusterize: true,
             // ObjectManager accepts the same options as the clusterer.
-            gridSize: 64,
+            gridSize: 32,
             // The layout of the pieChart cluster placemark.
             clusterIconLayout: "default#pieChart"
         });
